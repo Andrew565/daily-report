@@ -69,36 +69,6 @@
       font-size: 0.95rem;
     }
 
-    .setup-banner {
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 8px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1.75rem;
-      font-size: 0.875rem;
-      line-height: 1.5;
-      color: #bae6fd;
-    }
-
-    .setup-banner summary {
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--accent);
-    }
-
-    .setup-banner div {
-      margin-top: 0.5rem;
-      color: #cbd5e1;
-    }
-
-    .setup-banner code {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 0.1rem 0.35rem;
-      border-radius: 4px;
-      font-family: monospace;
-      color: #e0f2fe;
-    }
-
     .form-group {
       margin-bottom: 1.6rem;
     }
@@ -231,20 +201,6 @@
       border: 1px solid rgba(239, 68, 68, 0.35);
       color: #fca5a5;
     }
-
-    .endpoint-config {
-      margin-top: 1.5rem;
-      border-top: 1px solid var(--card-border);
-      padding-top: 1.2rem;
-      font-size: 0.825rem;
-      color: var(--text-muted);
-    }
-
-    .endpoint-config input {
-      margin-top: 0.4rem;
-      font-size: 0.825rem;
-      padding: 0.5rem 0.75rem;
-    }
   </style>
 </head>
 <body>
@@ -330,6 +286,8 @@
   </div>
 
   <script>
+    const ENDPOINT = "https://formspree.io/f/xjyyzazk";
+
     const form = document.getElementById('dailyForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMessage');
@@ -337,24 +295,10 @@
     const medsNo = document.getElementById('medsNo');
     const missedMedsBlock = document.getElementById('missedMedsBlock');
     const missedMedsInput = document.getElementById('missedMeds');
-    const customEndpointInput = document.getElementById('customEndpoint');
-    const setupDetails = document.getElementById('setupDetails');
 
     // Auto set subject with current date
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('emailSubject').value = `Daily Report - ${today}`;
-
-    // Load saved endpoint from localStorage or default
-    const savedEndpoint = localStorage.getItem('formspree_endpoint') || '';
-    if (savedEndpoint) {
-      customEndpointInput.value = savedEndpoint;
-    } else {
-      setupDetails.setAttribute('open', '');
-    }
-
-    customEndpointInput.addEventListener('input', (e) => {
-      localStorage.setItem('formspree_endpoint', e.target.value.trim());
-    });
 
     // Meds conditional logic
     function updateMedsVisibility() {
@@ -375,19 +319,6 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      let endpoint = customEndpointInput.value.trim();
-      if (!endpoint) {
-        statusMsg.className = 'status-msg error';
-        statusMsg.textContent = 'Please enter your Formspree Endpoint / Form ID in the configuration field above.';
-        setupDetails.setAttribute('open', '');
-        customEndpointInput.focus();
-        return;
-      }
-
-      if (!endpoint.startsWith('http')) {
-        endpoint = `https://formspree.io/f/${endpoint}`;
-      }
-
       submitBtn.disabled = true;
       submitBtn.innerText = 'Sending...';
       statusMsg.className = 'status-msg';
@@ -396,7 +327,7 @@
       const formData = new FormData(form);
 
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(ENDPOINT, {
           method: 'POST',
           body: formData,
           headers: {
@@ -408,18 +339,16 @@
           statusMsg.className = 'status-msg success';
           statusMsg.innerHTML = '<strong>Success!</strong> Your daily report has been emailed successfully.';
           form.reset();
-          // Keep the saved endpoint in the field
-          customEndpointInput.value = localStorage.getItem('formspree_endpoint') || '';
           updateMedsVisibility();
         } else {
           const result = await response.json().catch(() => ({}));
-          const errMsg = result.errors ? result.errors.map(err => err.message).join(', ') : 'Failed to send message. Please check your Formspree endpoint configuration.';
+          const errMsg = result.errors ? result.errors.map(err => err.message).join(', ') : 'Failed to send message. Please try again.';
           statusMsg.className = 'status-msg error';
           statusMsg.textContent = `Error: ${errMsg}`;
         }
       } catch (err) {
         statusMsg.className = 'status-msg error';
-        statusMsg.textContent = `Network error: ${err.message}. Please check your internet connection or Formspree endpoint.`;
+        statusMsg.textContent = `Network error: ${err.message}. Please check your connection and try again.`;
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = 'Send Daily Report';
