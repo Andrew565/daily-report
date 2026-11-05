@@ -251,17 +251,8 @@
   <div class="container">
     <header>
       <h1>Daily Check-in</h1>
-      <p>Submit your daily report. Sent to buckeyekevin1983@gmail.com with reply-to andrew565687@proton.me.</p>
+      <p>Submit your daily report.</p>
     </header>
-
-    <details class="setup-banner" id="setupDetails">
-      <summary>⚙️ Setup Note: Formspree Endpoint</summary>
-      <div>
-        To deliver emails from a static site hosted on GitHub Pages, this form submits via <strong>Formspree</strong>.
-        Create a free form endpoint at <a href="https://formspree.io" target="_blank" style="color:var(--accent);">formspree.io</a> set to deliver to <code>buckeyekevin1983@gmail.com</code>.
-        Enter your endpoint or form ID below (it will be saved in your browser's localStorage for future submissions).
-      </div>
-    </details>
 
     <form id="dailyForm">
       <!-- Hidden Email Fields for Formspree -->
@@ -328,12 +319,6 @@
       <div class="form-group">
         <label for="partners">8. What did you do for your partners today?<span class="optional-tag">(Optional)</span></label>
         <textarea id="partners" name="What you did for your partners" rows="3" placeholder="Acts of kindness, support, time spent, etc."></textarea>
-      </div>
-
-      <div class="endpoint-config">
-        <label for="customEndpoint">Formspree Endpoint URL or Form ID:</label>
-        <input type="text" id="customEndpoint" placeholder="e.g. https://formspree.io/f/mqkrgyep or mqkrgyep">
-        <small style="display:block; margin-top:4px;">Auto-saved to your browser. You can change it anytime.</small>
       </div>
 
       <button type="submit" class="btn-submit" id="submitBtn">
