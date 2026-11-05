@@ -4,19 +4,6 @@ A clean, responsive web application configured to run directly on **GitHub Pages
 
 ## Features
 
-- Asks all questions in the requested order:
-  1. **Highlight of the day?** *(Required)*
-  2. **Low moment of the day?** *(Required)*
-  3. **Number of orgasms you had?** *(Required)*
-  4. **Did you masturbate?** *(Required)*
-  5. **Did you take all your meds?** *(Required)*
-  6. **If not, which ones did you miss?** *(Conditionally required if answered "No")*
-  7. **Something you are grateful for today?** *(Optional)*
-  8. **What did you do for your partners today?** *(Optional)*
-- Configured to route replies to `andrew565687@proton.me`.
-- Emails destination: `buckeyekevin1983@gmail.com`.
-- Dark-mode responsive styling optimized for mobile and desktop.
-
 ---
 
 ## 1. Setting up Email Delivery (Free via Formspree)
