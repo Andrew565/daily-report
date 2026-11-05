@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Check-in</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --input-bg: #0b1120;
+      --input-border: #334155;
+      --input-focus: #38bdf8;
+      --required: #f43f5e;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.25rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.25rem;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    .setup-banner {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      margin-bottom: 1.75rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #bae6fd;
+    }
+
+    .setup-banner summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .setup-banner div {
+      margin-top: 0.5rem;
+      color: #cbd5e1;
+    }
+
+    .setup-banner code {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #e0f2fe;
+    }
+
+    .form-group {
+      margin-bottom: 1.6rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+
+    .required-tag {
+      color: var(--required);
+      margin-left: 0.25rem;
+    }
+
+    .optional-tag {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-weight: 400;
+      margin-left: 0.4rem;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 0.75rem 0.9rem;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 1.25rem;
+      margin-top: 0.4rem;
+    }
+
+    .radio-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #e2e8f0;
+    }
+
+    .conditional-block {
+      margin-top: 0.85rem;
+      padding-left: 1rem;
+      border-left: 2px solid var(--card-border);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .conditional-block.hidden {
+      display: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: #0b1120;
+      border: none;
+      border-radius: 8px;
+      padding: 0.875rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s, transform 0.05s;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status-msg {
+      margin-top: 1.25rem;
+      padding: 0.875rem;
+      border-radius: 8px;
+      display: none;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .status-msg.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+    }
+
+    .status-msg.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .endpoint-config {
+      margin-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      padding-top: 1.2rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .endpoint-config input {
+      margin-top: 0.4rem;
+      font-size: 0.825rem;
+      padding: 0.5rem 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Daily Check-in</h1>
+      <p>Submit your daily report. Sent to buckeyekevin1983@gmail.com with reply-to andrew565687@proton.me.</p>
+    </header>
+
+    <details class="setup-banner" id="setupDetails">
+      <summary>⚙️ Setup Note: Formspree Endpoint</summary>
+      <div>
+        To deliver emails from a static site hosted on GitHub Pages, this form submits via <strong>Formspree</strong>.
+        Create a free form endpoint at <a href="https://formspree.io" target="_blank" style="color:var(--accent);">formspree.io</a> set to deliver to <code>buckeyekevin1983@gmail.com</code>.
+        Enter your endpoint or form ID below (it will be saved in your browser's localStorage for future submissions).
+      </div>
+    </details>
+
+    <form id="dailyForm">
+      <!-- Hidden Email Fields for Formspree -->
+      <input type="hidden" name="_replyto" id="replyTo" value="andrew565687@proton.me">
+      <input type="hidden" name="_subject" id="emailSubject" value="Daily Report">
+
+      <!-- 1. Highlight of the day? (Required) -->
+      <div class="form-group">
+        <label for="highlight">1. Highlight of the day?<span class="required-tag">*</span></label>
+        <textarea id="highlight" name="Highlight of the day" rows="3" required placeholder="What was the best part of today?"></textarea>
+      </div>
+
+      <!-- 2. Low moment of the day? (Required) -->
+      <div class="form-group">
+        <label for="lowMoment">2. Low moment of the day?<span class="required-tag">*</span></label>
+        <textarea id="lowMoment" name="Low moment of the day" rows="3" required placeholder="What was challenging or difficult today?"></textarea>
+      </div>
+
+      <!-- 3. Number of orgasms you had? (Required) -->
+      <div class="form-group">
+        <label for="orgasms">3. Number of orgasms you had?<span class="required-tag">*</span></label>
+        <input type="number" id="orgasms" name="Number of orgasms" min="0" step="1" required placeholder="0">
+      </div>
+
+      <!-- 4. Did you masturbate? (Required) -->
+      <div class="form-group">
+        <label>4. Did you masturbate?<span class="required-tag">*</span></label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="Did you masturbate?" value="Yes" required> Yes
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="Did you masturbate?" value="No" required> No
+          </label>
+        </div>
+      </div>
+
+      <!-- 5. Did you take all your meds? (Required) -->
+      <div class="form-group">
+        <label>5. Did you take all your meds?<span class="required-tag">*</span></label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="Did you take all your meds?" value="Yes" required id="medsYes"> Yes
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="Did you take all your meds?" value="No" required id="medsNo"> No
+          </label>
+        </div>
+
+        <!-- 6. If not, which ones did you miss? (Required if No) -->
+        <div class="conditional-block hidden" id="missedMedsBlock">
+          <label for="missedMeds">6. If not, which ones did you miss?<span class="required-tag">*</span></label>
+          <textarea id="missedMeds" name="Missed meds" rows="2" placeholder="List any missed medications"></textarea>
+        </div>
+      </div>
+
+      <!-- 7. Something you are grateful for today? (Optional) -->
+      <div class="form-group">
+        <label for="grateful">7. Something you are grateful for today?<span class="optional-tag">(Optional)</span></label>
+        <textarea id="grateful" name="Something grateful for" rows="3" placeholder="What are you grateful for?"></textarea>
+      </div>
+
+      <!-- 8. What did you do for your partners today? (Optional) -->
+      <div class="form-group">
+        <label for="partners">8. What did you do for your partners today?<span class="optional-tag">(Optional)</span></label>
+        <textarea id="partners" name="What you did for your partners" rows="3" placeholder="Acts of kindness, support, time spent, etc."></textarea>
+      </div>
+
+      <div class="endpoint-config">
+        <label for="customEndpoint">Formspree Endpoint URL or Form ID:</label>
+        <input type="text" id="customEndpoint" placeholder="e.g. https://formspree.io/f/mqkrgyep or mqkrgyep">
+        <small style="display:block; margin-top:4px;">Auto-saved to your browser. You can change it anytime.</small>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span>Send Daily Report</span>
+      </button>
+
+      <div id="statusMessage" class="status-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('dailyForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMessage');
+    const medsYes = document.getElementById('medsYes');
+    const medsNo = document.getElementById('medsNo');
+    const missedMedsBlock = document.getElementById('missedMedsBlock');
+    const missedMedsInput = document.getElementById('missedMeds');
+    const customEndpointInput = document.getElementById('customEndpoint');
+    const setupDetails = document.getElementById('setupDetails');
+
+    // Auto set subject with current date
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('emailSubject').value = `Daily Report - ${today}`;
+
+    // Load saved endpoint from localStorage or default
+    const savedEndpoint = localStorage.getItem('formspree_endpoint') || '';
+    if (savedEndpoint) {
+      customEndpointInput.value = savedEndpoint;
+    } else {
+      setupDetails.setAttribute('open', '');
+    }
+
+    customEndpointInput.addEventListener('input', (e) => {
+      localStorage.setItem('formspree_endpoint', e.target.value.trim());
+    });
+
+    // Meds conditional logic
+    function updateMedsVisibility() {
+      if (medsNo.checked) {
+        missedMedsBlock.classList.remove('hidden');
+        missedMedsInput.setAttribute('required', 'required');
+      } else {
+        missedMedsBlock.classList.add('hidden');
+        missedMedsInput.removeAttribute('required');
+        missedMedsInput.value = '';
+      }
+    }
+
+    medsYes.addEventListener('change', updateMedsVisibility);
+    medsNo.addEventListener('change', updateMedsVisibility);
+
+    // Form submission handler
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let endpoint = customEndpointInput.value.trim();
+      if (!endpoint) {
+        statusMsg.className = 'status-msg error';
+        statusMsg.textContent = 'Please enter your Formspree Endpoint / Form ID in the configuration field above.';
+        setupDetails.setAttribute('open', '');
+        customEndpointInput.focus();
+        return;
+      }
+
+      if (!endpoint.startsWith('http')) {
+        endpoint = `https://formspree.io/f/${endpoint}`;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Sending...';
+      statusMsg.className = 'status-msg';
+      statusMsg.textContent = '';
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          statusMsg.className = 'status-msg success';
+          statusMsg.innerHTML = '<strong>Success!</strong> Your daily report has been emailed successfully.';
+          form.reset();
+          // Keep the saved endpoint in the field
+          customEndpointInput.value = localStorage.getItem('formspree_endpoint') || '';
+          updateMedsVisibility();
+        } else {
+          const result = await response.json().catch(() => ({}));
+          const errMsg = result.errors ? result.errors.map(err => err.message).join(', ') : 'Failed to send message. Please check your Formspree endpoint configuration.';
+          statusMsg.className = 'status-msg error';
+          statusMsg.textContent = `Error: ${errMsg}`;
+        }
+      } catch (err) {
+        statusMsg.className = 'status-msg error';
+        statusMsg.textContent = `Network error: ${err.message}. Please check your internet connection or Formspree endpoint.`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Send Daily Report';
+      }
+    });
+  </script>
+</body>
+</html>
